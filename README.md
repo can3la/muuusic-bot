@@ -15,7 +15,7 @@ A Discord Bot to listen high quality music in your server for free
 - Clone repository 
 
 ```shell
-git clone git@github.com:gustavo-flor/muuusic-bot.git
+git clone git@github.com:gustavo-flor/muuusic-bot.git && cd muuusic-bot
 ```
 
 - Clone `.env.example` to `.env`
