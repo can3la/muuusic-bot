@@ -6,9 +6,19 @@ A Discord Bot to listen high quality music in your server for free
 
 # Usage
 
-## Commands
+Invite Muuusic Bot to your Discord Guild and that's it.
 
-> Work In Progress...
+## Slash Commands
+
+### `/play`
+
+Play a track or playlist by providing a link or search query
+
+**Parameters**:
+
+- link-or-query: 
+  - **description**: Link or search query parameter
+  - **required**: `true`
 
 # Development
 
