@@ -1,10 +1,10 @@
 import dotenv from 'dotenv';
 import { client as discord, login } from './services/discord';
 
-import hooks from './hooks';
+import events from './events';
 
 dotenv.config();
 
-hooks.forEach(({event, handler}) => discord.on(event, handler));
+events.forEach(event => discord.on(event.name, event.handler));
 
 login();

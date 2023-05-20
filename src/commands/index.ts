@@ -1,8 +1,22 @@
-import { Message } from 'discord.js';
+import { ChatInputCommandInteraction } from 'discord.js';
 import play from './play';
 
+interface Option {
+  type: number;
+  name: string;
+  description: string;
+  required: boolean;
+}
+
+interface Command {
+  name: string;
+  description: string;
+  handler: (interaction: ChatInputCommandInteraction) => Promise<void>;
+  options: Option[]
+}
+
 interface Commands {
-  [key: string]: (message: Message<boolean>, args: string[]) => Promise<void>
+  [key: string]: Command
 }
 
 const commands: Commands = {
