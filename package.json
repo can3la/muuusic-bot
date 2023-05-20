@@ -4,6 +4,7 @@
   "description": "",
   "main": "./target/index.js",
   "scripts": {
+    "setup-env": "cp .env.example .env",
     "clean": "rimraf ./target",
     "install": "npx tsc",
     "start": "ts-node-dev --transpile-only --ignore-watch node_modules ./src/index.ts"
