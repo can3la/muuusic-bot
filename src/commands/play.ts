@@ -55,7 +55,7 @@ const handler = async (interaction: ChatInputCommandInteraction) => {
     adapterCreator: voiceChannel.guild.voiceAdapterCreator
   });
   
-  const audioResource = createAudioResource(track.preview, {});
+  const audioResource = createAudioResource(track.preview);
   const audioPlayer = createAudioPlayer({
     behaviors: {
       noSubscriber: NoSubscriberBehavior.Pause
