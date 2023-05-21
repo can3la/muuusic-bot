@@ -1,5 +1,7 @@
 import { ChatInputCommandInteraction } from 'discord.js';
+
 import play from './play';
+import stop from './stop';
 
 interface Option {
   type: number;
@@ -12,7 +14,7 @@ interface Command {
   name: string;
   description: string;
   handler: (interaction: ChatInputCommandInteraction) => Promise<void>;
-  options: Option[]
+  options?: Option[];
 }
 
 interface Commands {
@@ -20,7 +22,8 @@ interface Commands {
 }
 
 const commands: Commands = {
-  play
+  play,
+  stop
 }
 
 export default commands;

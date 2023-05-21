@@ -20,6 +20,10 @@ Play a track or playlist by providing a link or search query
   - **description**: Link or search query parameter
   - **required**: `true`
 
+### `/stop`
+
+Stop and clear the queue
+
 # Development
 
 - Clone repository 

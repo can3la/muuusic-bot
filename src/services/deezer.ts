@@ -11,6 +11,8 @@ interface Artist {
 interface Track {
   title: string;
   link: string;
+  preview: string;
+  duration: string;
   artist: Artist;
 }
 

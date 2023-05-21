@@ -1,5 +1,5 @@
-import { ChatInputCommandInteraction, EmbedBuilder, GuildMember } from 'discord.js';
-import { joinVoiceChannel } from '@discordjs/voice';
+import { ChatInputCommandInteraction, EmbedBuilder, GuildMember, ApplicationCommandOptionType } from 'discord.js';
+import { NoSubscriberBehavior, createAudioPlayer, createAudioResource, joinVoiceChannel } from '@discordjs/voice';
 
 import { searchTrackBy } from '../services/deezer';
 
@@ -10,7 +10,7 @@ const data = {
     {
       name: 'link-or-query',
       description: 'Link or search query',
-      type: 3,
+      type: ApplicationCommandOptionType.String,
       required: true
     }
   ]
@@ -25,7 +25,7 @@ const handler = async (interaction: ChatInputCommandInteraction) => {
   const voiceChannel = guildMember.voice.channel;
   if (voiceChannel == null) {
     const embed = new EmbedBuilder()
-      .setColor('#f51224')
+      .setColor('#f23f42')
       .setDescription('Ops... you must join a voice channel first 🙈')
       .setFooter({text: '💬 Please turn in and try again'});
     await interaction.reply({embeds: [embed]});
@@ -40,25 +40,46 @@ const handler = async (interaction: ChatInputCommandInteraction) => {
   const tracks = await searchTrackBy(linkOrQuery);
   if (tracks.length == 0) {
     const embed = new EmbedBuilder()
-      .setColor('#f51224')
-      .setDescription('Ops... any track was found 🙈')
+      .setColor('#f23f42')
+      .setDescription('Ops... no tracks were found 🙈')
       .setFooter({text: '💬 Please check your link-or-query param'});
     await interaction.reply({embeds: [embed]});
     return;
   }
+  
+  const [track] = tracks;
 
-  joinVoiceChannel({
+  const voiceConnection = joinVoiceChannel({
     channelId: voiceChannel.id,
     guildId: voiceChannel.guild.id,
     adapterCreator: voiceChannel.guild.voiceAdapterCreator
   });
   
-  const [track] = tracks;
+  const audioResource = createAudioResource(track.preview, {});
+  const audioPlayer = createAudioPlayer({
+    behaviors: {
+      noSubscriber: NoSubscriberBehavior.Pause
+    }
+  });
+  audioPlayer.play(audioResource);
+
+  const playerSubscription = voiceConnection.subscribe(audioPlayer);
+  if (!playerSubscription) {
+    voiceConnection.destroy();
+    const embed = new EmbedBuilder()
+      .setColor('#f23f42')
+      .setDescription('Ops... something went wrong 🙈')
+      .setFooter({text: '💬 Please try again'});
+    await interaction.reply({embeds: [embed]});
+    return;
+  }
+  setTimeout(() => playerSubscription.unsubscribe(), 30000);
+
   const embed = new EmbedBuilder()
     .setColor('#27282c')
     .setDescription(`**${track.title}** has been added to the queue.`)
     .setFooter({text: '🎧 Let\'s party cow 🐄'});
-  await interaction.reply({embeds: [embed]});
+  await interaction.reply({embeds: [embed]}); 
 }
 
 export default {
