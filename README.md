@@ -35,7 +35,7 @@ git clone git@github.com:gustavo-flor/muuusic-bot.git && cd muuusic-bot
 - Clone `.env.example` to `.env`
 
 ```shell
-npm run setup-env
+cp .env.example .env
 ```
 
 - Adjust external tokens on `.env`
@@ -43,5 +43,5 @@ npm run setup-env
 - Run muuusic bot locally
 
 ```shell
-npm run start
+npm run dev
 ```

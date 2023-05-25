@@ -2,8 +2,8 @@ import { ChatInputCommandInteraction, EmbedBuilder } from 'discord.js';
 import { useQueue } from 'discord-player';
 
 const data = {
-  name: 'stop',
-  description: 'Stop and clear the queue'
+  name: 'skip',
+  description: 'Skip current track in the queue'
 }
 
 const handler = async (interaction: ChatInputCommandInteraction) => {
@@ -13,11 +13,11 @@ const handler = async (interaction: ChatInputCommandInteraction) => {
   
   const queue = useQueue(interaction.guild.id);
   if (queue) {
-    queue.delete();
+    queue.node.skip();
     const embed = new EmbedBuilder()
       .setColor('#27282c')
-      .setDescription('The queue has been cleared, see you later! 👋')
-      .setFooter({text: '💬 Time to stop the party'});
+      .setDescription('The track was skiped 👽️')
+      .setFooter({text: '💬 Hey next song DJ'});
     await interaction.reply({embeds: [embed]}); 
     return;
   }

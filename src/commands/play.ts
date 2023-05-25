@@ -1,7 +1,7 @@
-import { ChatInputCommandInteraction, EmbedBuilder, GuildMember, ApplicationCommandOptionType } from 'discord.js';
-import { NoSubscriberBehavior, createAudioPlayer, createAudioResource, joinVoiceChannel } from '@discordjs/voice';
+import { ChatInputCommandInteraction, EmbedBuilder, ButtonBuilder, ActionRowBuilder, ButtonStyle, GuildMember, ApplicationCommandOptionType } from 'discord.js';
+import { QueryType } from 'discord-player';
 
-import { searchTrackBy } from '../services/deezer';
+import { player } from '../services/player';
 
 const data = {
   name: 'play',
@@ -20,7 +20,7 @@ const handler = async (interaction: ChatInputCommandInteraction) => {
   if (interaction.guild == null) {
     throw new Error('Guild is null, but it\'s required to handle command');
   }
-  
+
   const guildMember = interaction.member as GuildMember;
   const voiceChannel = guildMember.voice.channel;
   if (voiceChannel == null) {
@@ -32,54 +32,50 @@ const handler = async (interaction: ChatInputCommandInteraction) => {
     return;
   }
 
-  const [{value: linkOrQuery}] = interaction.options.data;
-  if (linkOrQuery == undefined || typeof linkOrQuery != 'string') {
-    throw new Error('Query is invalid, but it\'s required to handle command');
+  const linkOrQuery = interaction.options.getString('link-or-query', true);
+  if (linkOrQuery.trim().length == 0) {
+    throw new Error('Query is blank, but it\'s required to handle command');
   }
 
-  const tracks = await searchTrackBy(linkOrQuery);
-  if (tracks.length == 0) {
+  await interaction.deferReply();
+
+  await player.extractors.loadDefault();
+
+  const searchResult = await player.search(linkOrQuery, {
+    requestedBy: interaction.user,
+    searchEngine: QueryType.AUTO,
+  });
+
+  if (!searchResult.hasTracks()) {
     const embed = new EmbedBuilder()
       .setColor('#f23f42')
       .setDescription('Ops... no tracks were found 🙈')
       .setFooter({text: '💬 Please check your link-or-query param'});
-    await interaction.reply({embeds: [embed]});
+    await interaction.editReply({embeds: [embed]});
     return;
   }
-  
-  const [track] = tracks;
 
-  const voiceConnection = joinVoiceChannel({
-    channelId: voiceChannel.id,
-    guildId: voiceChannel.guild.id,
-    adapterCreator: voiceChannel.guild.voiceAdapterCreator
-  });
-  
-  const audioResource = createAudioResource(track.preview);
-  const audioPlayer = createAudioPlayer({
-    behaviors: {
-      noSubscriber: NoSubscriberBehavior.Pause
-    }
-  });
-  audioPlayer.play(audioResource);
-
-  const playerSubscription = voiceConnection.subscribe(audioPlayer);
-  if (!playerSubscription) {
-    voiceConnection.destroy();
-    const embed = new EmbedBuilder()
-      .setColor('#f23f42')
-      .setDescription('Ops... something went wrong 🙈')
-      .setFooter({text: '💬 Please try again'});
-    await interaction.reply({embeds: [embed]});
-    return;
+  const tracks = searchResult.tracks.slice(0, 5);
+  const actions = new ActionRowBuilder<ButtonBuilder>()
+  let description = '';
+  for (const [index, track] of tracks.entries()) {
+    const number = index + 1;
+    description += `${number}. ${track.title} - ${track.author} (${track.duration})\n`;
+    const button = new ButtonBuilder()
+      .setCustomId(track.url)
+      .setLabel(`${number}`)
+      .setStyle(ButtonStyle.Primary);
+    actions.addComponents(button);
   }
-  setTimeout(() => playerSubscription.unsubscribe(), 30000);
-
   const embed = new EmbedBuilder()
     .setColor('#27282c')
-    .setDescription(`**${track.title}** has been added to the queue.`)
-    .setFooter({text: '🎧 Let\'s party cow 🐄'});
-  await interaction.reply({embeds: [embed]}); 
+    .setDescription(description)
+    .setFooter({text: '💬 Please select one track to add to queue'});
+
+  await interaction.editReply({ 
+    embeds: [embed], 
+    components: [actions] 
+  })
 }
 
 export default {

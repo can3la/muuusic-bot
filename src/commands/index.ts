@@ -2,6 +2,7 @@ import { ChatInputCommandInteraction } from 'discord.js';
 
 import play from './play';
 import stop from './stop';
+import skip from './skip';
 
 interface Option {
   type: number;
@@ -22,8 +23,9 @@ interface Commands {
 }
 
 const commands: Commands = {
-  play,
-  stop
+  [play.name]: play,
+  [stop.name]: stop,
+  [skip.name]: skip
 }
 
 export default commands;

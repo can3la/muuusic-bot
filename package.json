@@ -4,27 +4,26 @@
   "description": "",
   "main": "./target/index.js",
   "scripts": {
-    "setup-env": "cp .env.example .env",
-    "clean": "rimraf ./target",
-    "install": "npx tsc",
-    "start": "ts-node-dev --transpile-only --ignore-watch node_modules ./src/index.ts"
+    "clean": "rimraf ./target && rimraf ./node_modules && rm ./package-lock.json",
+    "build": "npx tsc",
+    "dev": "ts-node-dev --transpile-only --ignore-watch node_modules ./src/index.ts"
   },
   "keywords": [],
   "author": "Gustavo Flôr",
   "license": "MIT",
   "dependencies": {
-    "@discordjs/voice": "^0.16.0",
-    "axios": "^0.26.1",
+    "@discord-player/extractor": "^4.2.2",
+    "@discordjs/opus": "^0.9.0",
+    "@distube/ytdl-core": "^4.11.10",
+    "discord-player": "^6.3.0",
     "discord.js": "^14.11.0",
     "dotenv": "^16.0.0",
     "ffmpeg-static": "^5.1.0",
-    "libsodium-wrappers": "^0.7.11",
-    "qs": "^6.10.3",
-    "rimraf": "^3.0.2",
     "typescript": "^4.6.3"
   },
   "devDependencies": {
     "@types/qs": "^6.9.7",
+    "rimraf": "^3.0.2",
     "ts-node-dev": "^1.1.8"
   }
 }
