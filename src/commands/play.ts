@@ -1,7 +1,7 @@
 import { ChatInputCommandInteraction, EmbedBuilder, ButtonBuilder, ActionRowBuilder, ButtonStyle, GuildMember, ApplicationCommandOptionType } from 'discord.js';
-import { QueryType } from 'discord-player';
 
-import { player } from '../services/player';
+import { addTrack, getTracksBy } from '../services/player';
+import theme from '../utils/theme';
 
 const data = {
   name: 'play',
@@ -25,50 +25,53 @@ const handler = async (interaction: ChatInputCommandInteraction) => {
   const voiceChannel = guildMember.voice.channel;
   if (voiceChannel == null) {
     const embed = new EmbedBuilder()
-      .setColor('#f23f42')
-      .setDescription('Ops... you must join a voice channel first 🙈')
+      .setColor(theme.errorColor)
+      .setDescription('Ops... you must join a voice channel first 🔊')
       .setFooter({text: '💬 Please turn in and try again'});
     await interaction.reply({embeds: [embed]});
     return;
   }
 
-  const linkOrQuery = interaction.options.getString('link-or-query', true);
-  if (linkOrQuery.trim().length == 0) {
+  const linkOrQuery = interaction.options.getString('link-or-query', true).trim();
+  if (linkOrQuery.length == 0) {
     throw new Error('Query is blank, but it\'s required to handle command');
   }
 
   await interaction.deferReply();
 
-  await player.extractors.loadDefault();
-
-  const searchResult = await player.search(linkOrQuery, {
-    requestedBy: interaction.user,
-    searchEngine: QueryType.AUTO,
-  });
+  const searchResult = await getTracksBy(linkOrQuery, interaction);
 
   if (!searchResult.hasTracks()) {
     const embed = new EmbedBuilder()
-      .setColor('#f23f42')
+      .setColor(theme.errorColor)
       .setDescription('Ops... no tracks were found 🙈')
       .setFooter({text: '💬 Please check your link-or-query param'});
     await interaction.editReply({embeds: [embed]});
     return;
   }
 
-  const tracks = searchResult.tracks.slice(0, 5);
+  if (searchResult.tracks.length == 1) {
+    const [track] = searchResult.tracks;
+    await addTrack(track, voiceChannel, interaction);
+    return;
+  }
+
+  const topFiveTracks = searchResult.tracks.slice(0, 5);
+
   const actions = new ActionRowBuilder<ButtonBuilder>()
   let description = '';
-  for (const [index, track] of tracks.entries()) {
-    const number = index + 1;
-    description += `${number}. ${track.title} - ${track.author} (${track.duration})\n`;
+  for (const [index, track] of topFiveTracks.entries()) {
+    const key = `${index + 1}`;
+    description += `${key}. ${track.title} - ${track.author} (${track.duration})\n`;
     const button = new ButtonBuilder()
       .setCustomId(track.url)
-      .setLabel(`${number}`)
+      .setLabel(key)
       .setStyle(ButtonStyle.Primary);
     actions.addComponents(button);
   }
+
   const embed = new EmbedBuilder()
-    .setColor('#27282c')
+    .setColor(theme.primaryColor)
     .setDescription(description)
     .setFooter({text: '💬 Please select one track to add to queue'});
 
