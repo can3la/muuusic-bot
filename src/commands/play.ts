@@ -2,6 +2,7 @@ import { ChatInputCommandInteraction, EmbedBuilder, ButtonBuilder, ActionRowBuil
 
 import { addTrack, getTracksBy } from '../services/player';
 import theme from '../utils/theme';
+import { player } from '../services/player';
 
 const data = {
   name: 'play',
@@ -26,7 +27,7 @@ const handler = async (interaction: ChatInputCommandInteraction) => {
   if (voiceChannel == null) {
     const embed = new EmbedBuilder()
       .setColor(theme.errorColor)
-      .setDescription('Ops... you must join a voice channel first 🔊')
+      .setDescription('You must join a voice channel first 🔊')
       .setFooter({text: '💬 Please turn in and try again'});
     await interaction.reply({embeds: [embed]});
     return;
@@ -62,7 +63,7 @@ const handler = async (interaction: ChatInputCommandInteraction) => {
   let description = '';
   for (const [index, track] of topFiveTracks.entries()) {
     const key = `${index + 1}`;
-    description += `${key}. ${track.title} - ${track.author} (${track.duration})\n`;
+    description += `${key}. ${track.title} - ${track.author} (${track.duration}) [${track.source}]\n`;
     const button = new ButtonBuilder()
       .setCustomId(track.url)
       .setLabel(key)

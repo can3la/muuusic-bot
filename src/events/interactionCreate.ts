@@ -19,12 +19,12 @@ const handler = async (interaction: Interaction<CacheType>) => {
     if (voiceChannel == null) {
       const embed = new EmbedBuilder()
         .setColor(theme.errorColor)
-        .setDescription('Ops... you must join a voice channel first 🔊')
+        .setDescription('You must join a voice channel first 🔊')
         .setFooter({text: '💬 Please turn in and try again'});
       await interaction.reply({embeds: [embed]});
       return;
     }
-
+    
     await interaction.deferReply();
 
     const searchResult = await getTracksBy(interaction.customId, interaction);
