@@ -2,6 +2,7 @@ import { ChatInputCommandInteraction, EmbedBuilder } from 'discord.js';
 import { useQueue } from 'discord-player';
 
 const data = {
+  enabled: true,
   name: 'skip',
   description: 'Skip current track in the queue'
 }

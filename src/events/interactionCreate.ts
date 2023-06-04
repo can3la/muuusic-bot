@@ -40,7 +40,7 @@ const handler = async (interaction: Interaction<CacheType>) => {
   }
 
   const command = commands[interaction.commandName];
-  if (command) {
+  if (command && command.enabled) {
     command.handler(interaction);
   }
 }

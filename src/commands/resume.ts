@@ -3,6 +3,7 @@ import { useQueue } from 'discord-player';
 import theme from '../utils/theme';
 
 const data = {
+  enabled: true,
   name: 'resume',
   description: 'Resume current paused track in the queue'
 }

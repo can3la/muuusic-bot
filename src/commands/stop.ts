@@ -2,6 +2,7 @@ import { ChatInputCommandInteraction, EmbedBuilder } from 'discord.js';
 import { useQueue } from 'discord-player';
 
 const data = {
+  enabled: true,
   name: 'stop',
   description: 'Stop and clear the queue'
 }

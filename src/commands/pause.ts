@@ -3,6 +3,7 @@ import { useQueue } from 'discord-player';
 import theme from '../utils/theme';
 
 const data = {
+  enabled: true,
   name: 'pause',
   description: 'Pause current track in the queue'
 }

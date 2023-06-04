@@ -15,15 +15,15 @@ export const getTracksBy = async (query: string, interaction: Interaction) => {
 }
 
 export const addTrack = async (track: Track, voiceChannel: VoiceBasedChannel, interaction: RepliableInteraction) => {
-  const queue = player.queues.create(voiceChannel.guild);
-  if (!queue.connection) {
-    await queue.connect(voiceChannel);
-  }
+  // const queue = player.queues.create(voiceChannel.guild);
+  // if (!queue.connection) {
+  //   await queue.connect(voiceChannel);
+  // }
   
-  queue.addTrack(track);
-  if (!queue.isPlaying()) {
-    queue.node.play();
-  }
+  // queue.addTrack(track);
+  // if (!queue.isPlaying()) {
+  //   queue.node.play();
+  // }
 
   const embed = new EmbedBuilder()
     .setColor(theme.primaryColor)

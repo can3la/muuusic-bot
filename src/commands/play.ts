@@ -5,6 +5,7 @@ import theme from '../utils/theme';
 import { player } from '../services/player';
 
 const data = {
+  enabled: true,
   name: 'play',
   description: 'Play a track or playlist by providing a link or search query',
   options: [

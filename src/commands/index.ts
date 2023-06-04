@@ -18,6 +18,7 @@ interface Command {
   description: string;
   handler: (interaction: ChatInputCommandInteraction) => Promise<void>;
   options?: Option[];
+  enabled: boolean;
 }
 
 interface Commands {
