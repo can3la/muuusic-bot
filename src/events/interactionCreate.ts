@@ -3,6 +3,7 @@ import { CacheType, Interaction, GuildMember, EmbedBuilder } from 'discord.js';
 import commands from '../commands';
 import { addTrack, getTracksBy } from '../services/player';
 import theme from '../utils/theme';
+import hooks from '../hooks';
 
 const handler = async (interaction: Interaction<CacheType>) => {
   if (!interaction.inGuild()) {
@@ -10,28 +11,12 @@ const handler = async (interaction: Interaction<CacheType>) => {
   }
 
   if (interaction.isButton()) {
-    if (interaction.guild == null) {
-      throw new Error('Guild is null, but it\'s required to handle command');
-    }
-
-    const guildMember = interaction.member as GuildMember;
-    const voiceChannel = guildMember.voice.channel;
-    if (voiceChannel == null) {
-      const embed = new EmbedBuilder()
-        .setColor(theme.errorColor)
-        .setDescription('You must join a voice channel first 🔊')
-        .setFooter({text: '💬 Please turn in and try again'});
-      await interaction.reply({embeds: [embed]});
+    if (interaction.message.interaction === null) {
       return;
     }
-    
-    await interaction.deferReply();
-
-    const searchResult = await getTracksBy(interaction.customId, interaction);
-    
-    if (searchResult.hasTracks()) {
-      const [track] = searchResult.tracks;
-      await addTrack(track, voiceChannel, interaction);
+    const hook = hooks[interaction.message.interaction.commandName];
+    if (hook) {
+      hook(interaction);
     }
   }
 

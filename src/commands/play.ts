@@ -2,7 +2,6 @@ import { ChatInputCommandInteraction, EmbedBuilder, ButtonBuilder, ActionRowBuil
 
 import { addTrack, getTracksBy } from '../services/player';
 import theme from '../utils/theme';
-import { player } from '../services/player';
 
 const data = {
   enabled: true,
@@ -46,7 +45,7 @@ const handler = async (interaction: ChatInputCommandInteraction) => {
   if (!searchResult.hasTracks()) {
     const embed = new EmbedBuilder()
       .setColor(theme.errorColor)
-      .setDescription('Ops... no tracks were found 🙈')
+      .setDescription('Ops... no tracks were found')
       .setFooter({text: '💬 Please check your link-or-query param'});
     await interaction.editReply({embeds: [embed]});
     return;
