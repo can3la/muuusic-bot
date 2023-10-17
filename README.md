@@ -40,6 +40,12 @@ cp .env.example .env
 
 - Adjust external tokens on `.env`
 
+- Install dependencies
+
+```shell
+npm i
+```
+
 - Run muuusic bot locally
 
 ```shell
